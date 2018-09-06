@@ -15,10 +15,25 @@ You can install optaas.client from github with:
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("MindFoundry/optaas-r-client")
+library("optaas.client")
 ```
 
 ## Example
 
 ```{r example, eval = FALSE}
-# (quick start script to be added here)
+client <- OPTaaSClient$new("Your OPTaaS URL", "Your OPTaaS API Key")
+
+# Create a task:
+task <- client$create_task(
+    title="Dummy task",
+    parameters=list(
+        list(type="boolean", name="dummy_bool")
+    ),
+    # optional arguments
+    goal="min",  # default is "max"
+    target_score=100,  # optimal score (if known)
+    initial_configurations=5,  # default is 10
+    random_seed=123,  # use only if you need reproducible results
+    user_defined_data=list(any=data)
+)
 ```
