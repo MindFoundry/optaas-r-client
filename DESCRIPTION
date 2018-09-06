@@ -11,6 +11,6 @@ Description: OPTaaS (Optimization as a Service) is a general-purpose Bayesian op
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: httr
+Imports: httr, R6
 Suggests: testthat
 RoxygenNote: 6.1.0
