@@ -18,12 +18,19 @@ devtools::install_github("MindFoundry/optaas-r-client")
 library(optaas.client)
 ```
 
-## Example
+## Tests
 
+* Set env vars `OPTAAS_URL` and `OPTAAS_API_KEY` accordingly.
+* `devtools::test()`
+
+## Usage
+
+Connect to your OPTaaS server:
 ```{r example, eval = FALSE}
 client <- OPTaaSClient$new("Your OPTaaS URL", "Your OPTaaS API Key")
-
-# Create a task:
+```
+Create a task:
+```{r example, eval = FALSE}
 task <- client$create_task(
     title="Dummy task",
     parameters=list(
