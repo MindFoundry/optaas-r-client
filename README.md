@@ -15,7 +15,7 @@ You can install optaas.client from github with:
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("MindFoundry/optaas-r-client")
-library("optaas.client")
+library(optaas.client)
 ```
 
 ## Example
