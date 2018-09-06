@@ -34,6 +34,6 @@ task <- client$create_task(
     target_score=100,  # optimal score (if known)
     initial_configurations=5,  # default is 10
     random_seed=123,  # use only if you need reproducible results
-    user_defined_data=list(any=data)
+    user_defined_data=list(any=data)  # any other data you wish to store
 )
 ```

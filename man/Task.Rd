@@ -13,10 +13,10 @@ Allows you to access Task attributes and perform all Task-related functions.
 }
 \examples{
 \dontrun{
-task.id  # The unique ID of the Task
-task.json  # The full JSON representation of the Task in OPTaaS
+task$id  # The unique ID of the Task
+task$json  # The full JSON representation of the Task in OPTaaS
 
-task.delete()  # Delete the task
+task$delete()  # Delete the task
 }
 }
 \keyword{datasets}
