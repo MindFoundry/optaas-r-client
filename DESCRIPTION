@@ -1,0 +1,16 @@
+Package: optaas.client
+Type: Package
+Title: Mind Foundry OPTaaS R Client
+Version: 1.2.10
+Author: Mind Foundry Ltd
+Maintainer: Mind Foundry Ltd <optaas@mindfoundry.ai>
+Description: OPTaaS (Optimization as a Service) is a general-purpose Bayesian optimizer developed
+    by Mind Foundry which provides optimal hyper-parameter configurations via web-services.
+    It can handle any parameter type and does not need to know the underlying process, models, or data.
+    This package makes it easier to interact with the web service and integrate with your R code.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: httr
+Suggests: testthat
+RoxygenNote: 6.1.0
