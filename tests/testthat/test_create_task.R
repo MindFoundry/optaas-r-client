@@ -3,7 +3,27 @@ context("Create Task")
 client <- OPTaaSClient$new(OPTAAS_URL, OPTAAS_API_KEY)
 
 title <- "Dummy task"
-parameters <- list(list(type = "boolean", name = "dummy_bool"))
+bool_with_id <- BoolParameter("my bool with id", id="bool_id")
+parameters <- list(
+    CategoricalParameter("my cat", list("a", 1, "1", 1.1, TRUE, FALSE, 0), default=TRUE),
+    ChoiceParameter("my choice", choices=list(
+        BoolParameter("my bool"),
+        bool_with_id,
+        BoolParameter("my bool with id and default", default=FALSE, id="bool_id_2"),
+        BoolParameter("my optional bool", optional=TRUE),
+        BoolParameter("my optional bool not in default", optional=TRUE, include_in_default=FALSE)
+    ), default=bool_with_id),
+    GroupParameter("ints", items=list(
+        IntParameter('my int', minimum=0, maximum=20, default=5, distribution="Uniform"),
+        IntParameter('my optional int', minimum=-10, maximum=10, optional=TRUE)
+    )),
+    GroupParameter("empty group", items=list()),
+    FloatParameter('float1', minimum=0, maximum=1, default=0.2),
+    FloatParameter('float2', minimum=0.5, maximum=4.5, distribution="LogUniform"),
+    SubsetParameter('subset with default', values=list("b", 3, TRUE, 1.2), default=list(TRUE, "b")),
+    SubsetParameter('subset without default', values=list(FALSE, -2.3)),
+    ConstantParameter('constant', value=123.456)
+)
 
 test_that("Task can be created, retrieved and deleted", {
     task <- client$create_task(title = title, parameters = parameters)
@@ -41,7 +61,7 @@ test_that("Task can be created, retrieved and deleted", {
 test_that("Optional arguments can be set", {
     task <- client$create_task(
         title = title,
-        parameters = parameters,
+        parameters <- list(BoolParameter("my bool")),
         goal = "min",
         target_score = 100,
         initial_configurations = 5,
@@ -50,7 +70,7 @@ test_that("Optional arguments can be set", {
     )
     
     expect_equal(title, task$json$title)
-    expect_equal(parameters, task$json$parameters)
+    expect_equal(list(list(type="boolean", name="my bool", optional=FALSE, includeInDefault=TRUE)), task$json$parameters)
     expect_equal("min", task$json$goal)
     expect_equal(100, task$json$targetScore)
     expect_equal(5, task$json$initialConfigurations)

@@ -5,24 +5,42 @@ API_ROOT = '/api/v1'
 #' Sets up a connection to OPTaaS and allows you to create a Task, retrieve existing Tasks etc.
 #'
 #' @export
-#'
+#' 
 #' @examples
 #' \dontrun{
+#' 
 #' client <- OPTaaSClient$new("Your OPTaaS URL", "Your OPTaaS API Key")
 #'
 #' # Create a task:
 #' task <- client$create_task(
 #'     title="Dummy task",
 #'     parameters=list(
-#'         list(type="boolean", name="dummy_bool")
+#'         BoolParameter("my_bool"),
+#'         CategoricalParameter("my_cat", values=list("a", "b", "c")),
+#'         ChoiceParameter('ints_or_floats', choices=list(
+#'             GroupParameter('ints', items=list(
+#'                 IntParameter('my_int', minimum=0, maximum=20),
+#'                 IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE)
+#'             )),
+#'             GroupParameter('floats', items=list(
+#'                 FloatParameter('float1', minimum=0, maximum=1),
+#'                 FloatParameter('float2', minimum=0.5, maximum=4.5)
+#'             ))
+#'         ))
 #'     ),
 #'     # optional arguments
 #'     goal="min",  # default is "max"
 #'     target_score=100,  # optimal score (if known)
 #'     initial_configurations=5,  # default is 10
 #'     random_seed=123,  # use only if you need reproducible results
-#'     user_defined_data=list(any=data)  # any other data you wish to store
+#'     user_defined_data=list(any="data")  # any other data you wish to store
 #' )
+#' 
+#' # Get a task:
+#' task <- client$get_task("Task ID")
+#' 
+#' # Get all tasks:
+#' tasks <- client$get_all_tasks()
 #' }
 
 OPTaaSClient <- R6::R6Class(
