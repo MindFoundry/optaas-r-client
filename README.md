@@ -18,11 +18,6 @@ devtools::install_github("MindFoundry/optaas-r-client")
 library(optaas.client)
 ```
 
-## Tests
-
-* Set env vars `OPTAAS_URL` and `OPTAAS_API_KEY` accordingly.
-* `devtools::test()`
-
 ## Usage
 
 Connect to your OPTaaS server:
@@ -44,3 +39,15 @@ task <- client$create_task(
     user_defined_data=list(any=data)  # any other data you wish to store
 )
 ```
+
+See also [our tutorial notebooks](https://tutorial.optaas.mindfoundry.ai).
+
+## Development
+
+[RStudio](https://www.rstudio.com/) is recommended.
+
+Each class/function should be documented using [roxygen comments](https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html). Use `Ctrl+Shift+D` in RStudio to generate the Rd files.
+
+To run tests: set env vars `OPTAAS_URL` and `OPTAAS_API_KEY` accordingly, then `Ctrl+Shift+T`.
+
+To run all checks (including tests): `Ctrl+Shift+E`.
