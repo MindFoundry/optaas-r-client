@@ -45,14 +45,33 @@ parameters <- list(
 )
 ```
 
+Define your scoring function:
+```{r example, eval = FALSE}
+scoring_function <- function(my_bool, my_cat, ints_or_floats) {
+    score <- if (isTRUE(my_bool)) 5 else -5
+    score <- if (my_cat == 'a') score + 1 else score + 3
+    if (!is.null(ints_or_floats$ints)) {
+        score <- score + do.call(sum, ints_or_floats$ints)
+    } else {
+        score <- score * do.call(sum, ints_or_floats$floats)
+    }
+    score
+}
+```
+
 Create your task:
 ```{r example, eval = FALSE}
 task <- client$create_task(
     title="Dummy task",
     parameters=parameters,
     goal="min",  # optional (default is "max")
-    target_score=100  # optional (optimal score, if known)
+    min_known_score=-22, max_known_score=44  # optional
 )
+```
+
+Run your task:
+```{r example, eval = FALSE}
+best_result <- task$run(scoring_function=scoring_function, number_of_iterations=20)
 ```
 
 See also [our tutorial notebooks](https://tutorial.optaas.mindfoundry.ai).

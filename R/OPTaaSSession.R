@@ -37,7 +37,8 @@ OPTaaSSession <- R6::R6Class(
                 private$headers
             )
             if (http_error(response)) {
-                stop(paste(status_code(response), httr::content(response)))
+                stop(paste("Status:", status_code(response), " ",
+                           "Message:", httr::content(response)))
             } else {
                 httr::content(response)
             }

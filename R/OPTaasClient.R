@@ -30,7 +30,7 @@ API_ROOT = '/api/v1'
 #'     ),
 #'     # optional arguments
 #'     goal="min",  # default is "max"
-#'     target_score=100,  # optimal score (if known)
+#'     min_known_score=0, max_known_score=100,
 #'     initial_configurations=5,  # default is 10
 #'     random_seed=123,  # use only if you need reproducible results
 #'     user_defined_data=list(any="data")  # any other data you wish to store
@@ -48,6 +48,7 @@ OPTaaSClient <- R6::R6Class(
     public = list(
         initialize = function(server_url, api_key) {
             private$session <- OPTaaSSession$new(server_url, api_key)
+            private$session <- OPTaaSSession$new(server_url, api_key)
             private$tasks_endpoint <- tryCatch({
                 private$session$get(API_ROOT)$'_links'$tasks$href
             },
@@ -58,7 +59,8 @@ OPTaaSClient <- R6::R6Class(
         create_task = function(title,
                                parameters,
                                goal = "max",
-                               target_score = NULL,
+                               min_known_score = NULL,
+                               max_known_score = NULL,
                                initial_configurations = NULL,
                                random_seed = NULL,
                                user_defined_data = NULL) {
@@ -66,7 +68,8 @@ OPTaaSClient <- R6::R6Class(
                 title = title,
                 parameters = parameters,
                 goal = goal,
-                targetScore = target_score,
+                minKnownScore = min_known_score,
+                maxKnownScore = max_known_score,
                 initialConfigurations = initial_configurations,
                 randomSeed = random_seed,
                 userDefined = user_defined_data

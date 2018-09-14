@@ -55,7 +55,7 @@ test_that("Task can be created, retrieved and deleted", {
     }
     
     expect_error(client$get_task(task$id),
-                 paste("400 No task found with id", task$id, sep = "="))
+                 paste("Status: 400   Message: No task found with id", task$id, sep = "="))
 })
 
 test_that("Optional arguments can be set", {
@@ -63,7 +63,7 @@ test_that("Optional arguments can be set", {
         title = title,
         parameters <- list(BoolParameter("my bool")),
         goal = "min",
-        target_score = 100,
+        min_known_score = 23, max_known_score = 78,
         initial_configurations = 5,
         random_seed = 123,
         user_defined_data = list(any = 1, data = 2)
@@ -72,7 +72,8 @@ test_that("Optional arguments can be set", {
     expect_equal(title, task$json$title)
     expect_equal(list(list(type="boolean", name="my bool", optional=FALSE, includeInDefault=TRUE)), task$json$parameters)
     expect_equal("min", task$json$goal)
-    expect_equal(100, task$json$targetScore)
+    expect_equal(23, task$json$minKnownScore)
+    expect_equal(78, task$json$maxKnownScore)
     expect_equal(5, task$json$initialConfigurations)
     expect_equal(123, task$json$randomSeed)
     expect_equal(list(any = 1, data = 2), task$json$userDefined)

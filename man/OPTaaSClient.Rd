@@ -35,7 +35,7 @@ task <- client$create_task(
     ),
     # optional arguments
     goal="min",  # default is "max"
-    target_score=100,  # optimal score (if known)
+    min_known_score=0, max_known_score=100,
     initial_configurations=5,  # default is 10
     random_seed=123,  # use only if you need reproducible results
     user_defined_data=list(any="data")  # any other data you wish to store
