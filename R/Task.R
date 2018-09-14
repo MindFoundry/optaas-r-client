@@ -40,6 +40,7 @@ Task <- R6::R6Class(
             for (i in 1:number_of_iterations) {
                 score <- do.call(scoring_function, configuration$values)
                 print(paste("Iteration:", i, " ", "Score:", score))
+                flush.console()
                 configuration <- self$record_result(configuration, score)
             }
             self$get_best_result()
