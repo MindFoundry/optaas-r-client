@@ -20,11 +20,14 @@ scoring_function <- function(float, int) {
     list(objective1=score1, objective2=score2)
 }
 
+number_of_iterations = 6
+
 test_that("Can run a multi-objective task", {
     task <- client$create_task(
         title = title, 
         parameters = parameters, 
         objectives = objectives
     )
-    task$run(scoring_function=scoring_function, number_of_iterations=6)
+    task$run(scoring_function=scoring_function, number_of_iterations=number_of_iterations)
+    expect_equal(number_of_iterations, length(task$get_results()))
 })

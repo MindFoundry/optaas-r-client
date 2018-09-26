@@ -43,7 +43,7 @@ Task <- R6::R6Class(
             
             for (i in 1:number_of_iterations) {
                 score <- do.call(scoring_function, configuration$values)
-                print(paste("Iteration:", i, " ", "Score:", deparse(score)))
+                print(paste("Iteration:", i, " ", "Score:", to_string(score)))
                 flush.console()
                 configuration <- self$record_result(configuration, score)
             }
@@ -87,3 +87,12 @@ Task <- R6::R6Class(
         results_url = NULL
     )
 )
+
+
+to_string <- function(score) {
+    if (is(score, "list")) {
+        paste(names(score), score, sep = "=", collapse = ", ")
+    } else {
+        score
+    }
+}
