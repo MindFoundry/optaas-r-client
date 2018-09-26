@@ -11,14 +11,17 @@
 #' 
 #' # To run your task:
 #' # First define a scoring function whose arguments are identical to your parameter names.
-#' # The function should return a score value. Then to run the task for n iterations and store the best result:
+#' # The function should return a score value. 
+#' # Then to run the task for n iterations and store the best result:
 #' best_result <- task$run(scoring_function, n)
 #' 
 #' # Or if you prefer to do things manually:
 #' task$generate_configuration()  # Generate a configuration
-#' task$record_result(configuration, score)  # Record your score and return the next configuration to try
+#' task$record_result(configuration, score)  # Record your score and return a new configuration
 #' task$get_best_result()  # Return the result with the best score
 #'
+#' # Other functions:
+#' task$get_results()  # Get all recorded results
 #' task$delete()  # Delete the task
 #' }
 
@@ -55,10 +58,19 @@ Task <- R6::R6Class(
             response <- private$session$post(result_url, result_body)
             response$nextConfiguration
         },
+        get_results = function(best_first = FALSE, limit = NULL) {
+            query <- list(includeConfigurations = "true")
+            if (isTRUE(best_first)) {
+                query$order <- "bestFirst"
+            }
+            if (!is.null(limit)) {
+                query$limit <- limit
+            }
+            response <- private$session$get(private$results_url, query=query)
+            response$results
+        },
         get_best_result = function() {
-            url <- paste(private$results_url, '?order=bestFirst&limit=1&includeConfigurations=true', sep="")
-            response <- private$session$get(url)
-            response$results[[1]]
+            self$get_results(best_first=TRUE, limit=1)[[1]]
         },
         delete = function() {
             private$session$delete(private$self_url)

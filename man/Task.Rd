@@ -18,14 +18,17 @@ task$json  # The full JSON representation of the Task in OPTaaS
 
 # To run your task:
 # First define a scoring function whose arguments are identical to your parameter names.
-# The function should return a score value. Then to run the task for n iterations and store the best result:
+# The function should return a score value. 
+# Then to run the task for n iterations and store the best result:
 best_result <- task$run(scoring_function, n)
 
 # Or if you prefer to do things manually:
 task$generate_configuration()  # Generate a configuration
-task$record_result(configuration, score)  # Record your score and return the next configuration to try
+task$record_result(configuration, score)  # Record your score and return a new configuration
 task$get_best_result()  # Return the result with the best score
 
+# Other functions:
+task$get_results()  # Get all recorded results
 task$delete()  # Delete the task
 }
 }

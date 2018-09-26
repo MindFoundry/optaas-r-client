@@ -16,8 +16,8 @@ OPTaaSSession <- R6::R6Class(
         post = function(endpoint, body) {
             private$get_response(POST, endpoint, body)
         },
-        get = function(endpoint) {
-            private$get_response(GET, endpoint)
+        get = function(endpoint, query = NULL) {
+            private$get_response(GET, endpoint, query=query)
         },
         put = function(endpoint) {
             private$get_response(PUT, endpoint)
@@ -29,9 +29,10 @@ OPTaaSSession <- R6::R6Class(
     private = list(
         server_url = NULL,
         headers = NULL,
-        get_response = function(callable, endpoint, body = NULL) {
+        get_response = function(callable, endpoint, body = NULL, query = NULL) {
             response <- callable(
                 url = modify_url(private$server_url, path = endpoint),
+                query = query,
                 body = body,
                 encode = "json",
                 private$headers

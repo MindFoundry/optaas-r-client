@@ -1,4 +1,4 @@
-context("Create Task")
+context("Run Task")
 
 client <- OPTaaSClient$new(OPTAAS_URL, OPTAAS_API_KEY)
 
@@ -33,15 +33,20 @@ scoring_function <- function(my_bool, my_cat, ints_or_floats) {
     score
 }
 
+task <- client$create_task(title = title, parameters = parameters, initial_configurations = 3)
+
+run_task_and_verify <- function(number_of_iterations) {
+    best_result <- task$run(scoring_function=scoring_function, number_of_iterations=number_of_iterations)
+    
+    expect_false(is.null(best_result$configuration$values))
+    
+    expected_score <- do.call(scoring_function, best_result$configuration$values)
+    expect_equal(expected_score, best_result$score, tolerance=0.01)
+}
+
 
 test_that("Can run task for a fixed number of iterations, then some more iterations", {
-    task <- client$create_task(title = title, parameters = parameters, initial_configurations = 3)
-    
-    best_result <- task$run(scoring_function=scoring_function, number_of_iterations=5)
-    expect_false(is.null(best_result$configuration$values))
-    expect_equal(do.call(scoring_function, best_result$configuration$values), best_result$score)
-    
-    best_result <- task$run(scoring_function=scoring_function, number_of_iterations=2)
-    expect_false(is.null(best_result$configuration$values))
-    expect_equal(do.call(scoring_function, best_result$configuration$values), best_result$score)
+    run_task_and_verify(5)
+    run_task_and_verify(2)
 })
+
