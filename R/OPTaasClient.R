@@ -31,6 +31,9 @@ API_ROOT = '/api/v1'
 #'     # optional arguments
 #'     goal="min",  # default is "max"
 #'     min_known_score=0, max_known_score=100,
+#'     objectives=list(
+#'         list(id="objective1", goal="min", min_known_score=0, max_known_score=100)
+#'     )
 #'     initial_configurations=5,  # default is 10
 #'     random_seed=123,  # use only if you need reproducible results
 #'     user_defined_data=list(any="data")  # any other data you wish to store
@@ -58,9 +61,10 @@ OPTaaSClient <- R6::R6Class(
         },
         create_task = function(title,
                                parameters,
-                               goal = "max",
+                               goal = NULL,
                                min_known_score = NULL,
                                max_known_score = NULL,
+                               objectives = NULL,
                                initial_configurations = NULL,
                                random_seed = NULL,
                                user_defined_data = NULL) {
@@ -70,6 +74,7 @@ OPTaaSClient <- R6::R6Class(
                 goal = goal,
                 minKnownScore = min_known_score,
                 maxKnownScore = max_known_score,
+                objectives = objectives,
                 initialConfigurations = initial_configurations,
                 randomSeed = random_seed,
                 userDefined = user_defined_data

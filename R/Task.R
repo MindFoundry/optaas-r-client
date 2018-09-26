@@ -40,13 +40,17 @@ Task <- R6::R6Class(
         },
         run = function(scoring_function, number_of_iterations) {
             configuration <- self$generate_configuration()
+            
             for (i in 1:number_of_iterations) {
                 score <- do.call(scoring_function, configuration$values)
-                print(paste("Iteration:", i, " ", "Score:", score))
+                print(paste("Iteration:", i, " ", "Score:", deparse(score)))
                 flush.console()
                 configuration <- self$record_result(configuration, score)
             }
-            self$get_best_result()
+            
+            if (is.null(self$json$objectives)) {
+                self$get_best_result()
+            }
         },
         generate_configuration = function() {
             response <- private$session$post(private$configurations_url, NULL)
