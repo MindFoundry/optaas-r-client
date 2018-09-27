@@ -20,7 +20,7 @@ API_ROOT = '/api/v1'
 #'         ChoiceParameter('ints_or_floats', choices=list(
 #'             GroupParameter('ints', items=list(
 #'                 IntParameter('my_int', minimum=0, maximum=20, id="int"),
-#'                 IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE, id="opt_int")
+#'                 IntParameter('optional_int', minimum=-10, maximum=10, optional=TRUE, id="opt_int")
 #'             )),
 #'             GroupParameter('floats', items=list(
 #'                 FloatParameter('float1', minimum=0, maximum=1),
@@ -29,15 +29,20 @@ API_ROOT = '/api/v1'
 #'         ))
 #'     ),
 #'     
-#'     # optional arguments
-#'     goal="min",  # default is "max"
-#'     min_known_score=0, max_known_score=100,
+#'     # for single-objective tasks
+#'     goal="min",  # optional, default is "max"
+#'     min_known_score=0, max_known_score=100,  # optional
+#'     
+#'     # for multi-objective tasks
 #'     objectives=list(
-#'         list(id="objective1", goal="min", min_known_score=0, max_known_score=100)
+#'         Objective(id="objective1", goal="min", min_known_score=0, max_known_score=100)
+#'         Objective(id="objective2"),  # defaults to goal="max"
 #'     ),
+#'     
+#'     # optional arguments
 #'     initial_configurations=5,  # default is 10
 #'     random_seed=123,  # use only if you need reproducible results
-#'     user_defined_data=list(any="data")  # any other data you wish to store
+#'     user_defined_data=list(any="data"),  # any other data you wish to store
 #' )
 #' 
 #' # Get a task:

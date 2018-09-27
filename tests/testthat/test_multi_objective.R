@@ -10,8 +10,9 @@ parameters <- list(
 )
 
 objectives <- list(
-    list(id="objective1"),
-    list(id="objective2", goal="min")
+    Objective("objective1"),
+    Objective("objective2", goal="min"),
+    Objective("objective3", min_known_score=-123, max_known_score=456)
 )
 
 scoring_function <- function(float, int) {
@@ -28,6 +29,14 @@ test_that("Can run a multi-objective task", {
         parameters = parameters, 
         objectives = objectives
     )
+    
+    expected_objectives <- list(
+        list(id="objective1", goal="max"),
+        list(id="objective2", goal="min"),
+        list(id="objective3", minKnownScore=-123, maxKnownScore=456, goal="max")
+    )
+    expect_equal(expected_objectives, task$json$objectives)
+    
     task$run(scoring_function=scoring_function, number_of_iterations=number_of_iterations)
     expect_equal(number_of_iterations, length(task$get_results()))
 })

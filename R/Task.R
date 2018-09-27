@@ -90,7 +90,7 @@ Task <- R6::R6Class(
 
 
 to_string <- function(score) {
-    if (is(score, "list")) {
+    if (class(score) == "list") {
         paste(names(score), score, sep = "=", collapse = ", ")
     } else {
         score
