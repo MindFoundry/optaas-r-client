@@ -26,17 +26,14 @@ client <- OPTaaSClient$new("Your OPTaaS URL", "Your OPTaaS API Key")
 
 Define your parameters:
 ```{r example, eval = FALSE}
-bool_param <- BoolParameter('my_bool')
-cat_param <- CategoricalParameter('my_cat', values=list('a', 'b', 'c'), default='c')
-
-int_param <- IntParameter('my_int', minimum=0, maximum=20)
-optional_int_param <- IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE)
-
 parameters <- list(
-    bool_param,
-    cat_param,
+    BoolParameter('my_bool'),
+    CategoricalParameter('my_cat', values=list('a', 'b', 'c'), default='c'),
     ChoiceParameter('ints_or_floats', choices=list(
-        GroupParameter('ints', items=list(int_param, optional_int_param)),
+        GroupParameter('ints', items=list(
+            IntParameter('my_int', minimum=0, maximum=20), 
+            IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE)
+        )),
         GroupParameter('floats', items=list(
             FloatParameter('float1', minimum=0, maximum=1),
             FloatParameter('float2', minimum=0.5, maximum=4.5)

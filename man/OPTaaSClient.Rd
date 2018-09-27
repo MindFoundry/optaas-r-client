@@ -21,11 +21,11 @@ task <- client$create_task(
     title="Dummy task",
     parameters=list(
         BoolParameter("my_bool"),
-        CategoricalParameter("my_cat", values=list("a", "b", "c")),
+        CategoricalParameter("my_cat", values=list("a", "b", "c"), id="cat"),
         ChoiceParameter('ints_or_floats', choices=list(
             GroupParameter('ints', items=list(
-                IntParameter('my_int', minimum=0, maximum=20),
-                IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE)
+                IntParameter('my_int', minimum=0, maximum=20, id="int"),
+                IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE, id="opt_int")
             )),
             GroupParameter('floats', items=list(
                 FloatParameter('float1', minimum=0, maximum=1),
@@ -33,12 +33,13 @@ task <- client$create_task(
             ))
         ))
     ),
+    
     # optional arguments
     goal="min",  # default is "max"
     min_known_score=0, max_known_score=100,
     objectives=list(
         list(id="objective1", goal="min", min_known_score=0, max_known_score=100)
-    )
+    ),
     initial_configurations=5,  # default is 10
     random_seed=123,  # use only if you need reproducible results
     user_defined_data=list(any="data")  # any other data you wish to store
