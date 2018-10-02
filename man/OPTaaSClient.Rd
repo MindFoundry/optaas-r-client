@@ -45,6 +45,10 @@ task <- client$create_task(
     ),
     
     # optional arguments
+    constraints=list(
+        '#int * 2 != 14',  # reference parameters using # followed by the parameter id
+        'if #cat == "a" then #opt_int is_present'
+    ),
     initial_configurations=5,  # default is 10
     random_seed=123,  # use only if you need reproducible results
     user_defined_data=list(any="data"),  # any other data you wish to store

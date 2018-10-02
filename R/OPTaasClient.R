@@ -40,6 +40,10 @@ API_ROOT = '/api/v1'
 #'     ),
 #'     
 #'     # optional arguments
+#'     constraints=list(
+#'         '#int * 2 != 14',  # reference parameters using # followed by the parameter id
+#'         'if #cat == "a" then #opt_int is_present'
+#'     ),
 #'     initial_configurations=5,  # default is 10
 #'     random_seed=123,  # use only if you need reproducible results
 #'     user_defined_data=list(any="data"),  # any other data you wish to store
@@ -67,6 +71,7 @@ OPTaaSClient <- R6::R6Class(
         },
         create_task = function(title,
                                parameters,
+                               constraints = NULL,
                                goal = NULL,
                                min_known_score = NULL,
                                max_known_score = NULL,
@@ -77,6 +82,7 @@ OPTaaSClient <- R6::R6Class(
             body <- list(
                 title = title,
                 parameters = parameters,
+                constraints = constraints,
                 goal = goal,
                 minKnownScore = min_known_score,
                 maxKnownScore = max_known_score,

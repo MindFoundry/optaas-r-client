@@ -4,8 +4,8 @@ client <- OPTaaSClient$new(OPTAAS_URL, OPTAAS_API_KEY)
 
 title <- "Dummy task"
 
-bool_param <- BoolParameter('my_bool')
-cat_param <- CategoricalParameter('my_cat', values=list('a', 'b', 'c'), default='c')
+bool_param <- BoolParameter('my_bool', id='x')
+cat_param <- CategoricalParameter('my_cat', values=list('a', 'b', 'c'), default='c', id='y')
 
 int_param <- IntParameter('my_int', minimum=0, maximum=20)
 optional_int_param <- IntParameter('my_optional_int', minimum=-10, maximum=10, optional=TRUE)
@@ -22,7 +22,14 @@ parameters <- list(
     ))
 )
 
+constraints <- list(
+    'if #x == true then #y != "b"'
+)
+
 scoring_function <- function(my_bool, my_cat, ints_or_floats) {
+    if (isTRUE(my_bool) && my_cat == 'b') {
+        stop('Configuation violates constraint!')
+    }
     score <- if (isTRUE(my_bool)) 5 else -5
     score <- if (my_cat == 'a') score + 1 else score + 3
     if (!is.null(ints_or_floats$ints)) {
@@ -33,7 +40,8 @@ scoring_function <- function(my_bool, my_cat, ints_or_floats) {
     score
 }
 
-task <- client$create_task(title = title, parameters = parameters, initial_configurations = 3)
+task <- client$create_task(title = title, parameters = parameters, 
+                           constraints = constraints, initial_configurations = 3)
 
 run_task_and_verify <- function(number_of_iterations) {
     best_result <- task$run(scoring_function=scoring_function, number_of_iterations=number_of_iterations)

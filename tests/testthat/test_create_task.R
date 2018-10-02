@@ -3,9 +3,10 @@ context("Create Task")
 client <- OPTaaSClient$new(OPTAAS_URL, OPTAAS_API_KEY)
 
 title <- "Dummy task"
+
 bool_with_id <- BoolParameter("my bool with id", id="bool_id")
 parameters <- list(
-    CategoricalParameter("my cat", list("a", 1, "1", 1.1, TRUE, FALSE, 0), default=TRUE),
+    CategoricalParameter("my cat", list("a", 1, "1", 1.1, TRUE, FALSE, 0), default=TRUE, id='cat'),
     ChoiceParameter("my choice", choices=list(
         BoolParameter("my bool"),
         bool_with_id,
@@ -14,8 +15,8 @@ parameters <- list(
         BoolParameter("my optional bool not in default", optional=TRUE, include_in_default=FALSE)
     ), default=bool_with_id),
     GroupParameter("ints", items=list(
-        IntParameter('my int', minimum=0, maximum=20, default=5, distribution="Uniform"),
-        IntParameter('my optional int', minimum=-10, maximum=10, optional=TRUE)
+        IntParameter('my int', minimum=0, maximum=20, default=5, distribution="Uniform", id='int'),
+        IntParameter('my optional int', minimum=-10, maximum=10, optional=TRUE, id='opt_int')
     )),
     GroupParameter("empty group", items=list()),
     FloatParameter('float1', minimum=0, maximum=1, default=0.2),
@@ -25,14 +26,22 @@ parameters <- list(
     ConstantParameter('constant', value=123.456)
 )
 
+constraints <- list(
+    '#int * 2 != 14',
+    'if #cat == "a" then #opt_int is_present'
+)
+
 test_that("Task can be created, retrieved and deleted", {
-    task <- client$create_task(title = title, parameters = parameters)
+    task <- client$create_task(title = title, parameters = parameters, constraints = constraints)
     
     expect_equal(title, task$json$title)
     expect_equal(parameters, task$json$parameters)
     expect_equal("max", task$json$goal)
     expect_equal(10, task$json$initialConfigurations)
-    expect_null(task$json$targetScore)
+    expect_equal(constraints, task$json$constraints)
+    expect_null(task$json$minKnownScore)
+    expect_null(task$json$maxKnownScore)
+    expect_null(task$json$objectives)
     expect_null(task$json$randomSeed)
     expect_null(task$json$userDefined)
     
@@ -71,6 +80,7 @@ test_that("Optional arguments can be set", {
     
     expect_equal(title, task$json$title)
     expect_equal(list(list(type="boolean", name="my bool", optional=FALSE, includeInDefault=TRUE)), task$json$parameters)
+    expect_equal(list(), task$json$constraints)
     expect_equal("min", task$json$goal)
     expect_equal(23, task$json$minKnownScore)
     expect_equal(78, task$json$maxKnownScore)
