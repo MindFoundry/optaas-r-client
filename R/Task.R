@@ -63,7 +63,7 @@ Task <- R6::R6Class(
             response$nextConfiguration
         },
         get_results = function(best_first = FALSE, limit = NULL) {
-            query <- list(includeConfigurations = "true")
+            query <- list()
             if (isTRUE(best_first)) {
                 query$order <- "bestFirst"
             }
