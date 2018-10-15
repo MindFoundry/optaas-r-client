@@ -13,8 +13,8 @@ OPTaaSSession <- R6::R6Class(
             private$server_url <- server_url
             private$headers <- add_headers('X-ApiKey' = api_key, 'User-Agent' = USER_AGENT)
         },
-        post = function(endpoint, body) {
-            private$get_response(POST, endpoint, body)
+        post = function(endpoint, body, query = NULL) {
+            private$get_response(POST, endpoint, body, query=query)
         },
         get = function(endpoint, query = NULL) {
             private$get_response(GET, endpoint, query=query)

@@ -27,6 +27,12 @@ task$generate_configuration()  # Generate a configuration
 task$record_result(configuration, score)  # Record your score and return a new configuration
 task$get_best_result()  # Return the result with the best score
 
+# To use batching (i.e. parallel score evaluation):
+configurations <- task$generate_configurations(number_of_workers)
+results <- your_parallel_scoring_function(configurations)
+# NB results needs to be a list of (configuration$id, score) lists
+next_configurations <- task$record_results(results)
+
 # Other functions:
 task$get_results()  # Get all recorded results
 task$delete()  # Delete the task
