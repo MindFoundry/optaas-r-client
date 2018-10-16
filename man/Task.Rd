@@ -36,6 +36,7 @@ next_configurations <- task$record_results(results)
 
 # Other functions:
 task$get_results()  # Get all recorded results
+task$get_surrogate_predictions()  # Get predicted scores for specific configurations
 task$delete()  # Delete the task
 }
 }

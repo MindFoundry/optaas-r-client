@@ -29,6 +29,7 @@
 #'
 #' # Other functions:
 #' task$get_results()  # Get all recorded results
+#' task$get_surrogate_predictions()  # Get predicted scores for specific configurations
 #' task$delete()  # Delete the task
 #' }
 
@@ -45,6 +46,7 @@ Task <- R6::R6Class(
             private$configurations_url <- json$'_links'$configurations$href
             private$results_url <- json$'_links'$results$href
             private$pareto_url <- json$'_links'$pareto$href
+            private$predictions_url <- json$'_links'$predictions$href
         },
         run = function(scoring_function, number_of_iterations) {
             configuration <- self$generate_configuration()
@@ -98,6 +100,12 @@ Task <- R6::R6Class(
             response <- private$session$get(private$pareto_url)
             response$results
         },
+        get_surrogate_predictions = function(configurations) {
+            wrapped_configurations <- lapply(configurations, function(values) { list(values=values) })
+            body <- list(configurations = wrapped_configurations)
+            response <- private$session$post(private$predictions_url, body)
+            response$predictions
+        },
         delete = function() {
             private$session$delete(private$self_url)
         }
@@ -107,7 +115,8 @@ Task <- R6::R6Class(
         self_url = NULL,
         configurations_url = NULL,
         results_url = NULL,
-        pareto_url = NULL
+        pareto_url = NULL,
+        predictions_url = NULL
     )
 )
 
