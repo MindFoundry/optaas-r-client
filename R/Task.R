@@ -29,6 +29,7 @@
 #' next_configurations <- task$record_results(results)
 #'
 #' # Other functions:
+#' task$add_user_defined_configuration()  # Warm-start the optimization by recording results you've already calculated
 #' task$get_results()  # Get all recorded results
 #' task$get_surrogate_predictions()  # Get predicted scores for specific configurations
 #' task$complete()  # Complete the task (no more configurations or results can be added)
@@ -79,6 +80,26 @@ Task <- R6::R6Class(
             result_body <- result$to_json_without_configuration()
             response <- private$session$post(result_url, result_body)
             response$nextConfiguration
+        },
+        add_user_defined_configuration = function(configuration_values, score=NULL, variance=NULL, error=NULL,
+                                                  user_defined_data=NULL) {
+            body <- list(values=configuration_values)
+            
+            if (!is.null(score)) {
+                result <- list(score=score)
+                result[["variance"]] <- variance
+                result[["userDefined"]] <- user_defined_data
+                body[["results"]] <- list(result)
+            } else {
+                if (!is.null(error)) {
+                    result <- list(error=error)
+                    result[["userDefined"]] <- user_defined_data
+                    body[["results"]] <- list(result)
+                }
+            }
+            
+            response <- private$session$post(private$configurations_url, body)
+            response$configurations[[1]]
         },
         generate_configurations = function(quantity) {
             response <- private$session$post(private$configurations_url, body=NULL, query=list(quantity=quantity))

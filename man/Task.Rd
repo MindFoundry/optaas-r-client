@@ -36,6 +36,7 @@ results <- your_parallel_scoring_function(configurations)
 next_configurations <- task$record_results(results)
 
 # Other functions:
+task$add_user_defined_configuration()  # Warm-start the optimization by recording results you've already calculated
 task$get_results()  # Get all recorded results
 task$get_surrogate_predictions()  # Get predicted scores for specific configurations
 task$complete()  # Complete the task (no more configurations or results can be added)
