@@ -20,6 +20,10 @@ test_that("Can run task and then get recorded results", {
     # Get all results in posted order
     all_results <- task$get_results()
     expect_equal(number_of_iterations, length(all_results))
+    for (result in all_results) {
+        expected_score <- do.call(scoring_function, result$configuration$values)
+        expect_equal(expected_score, result$score, tolerance=0.01)
+    }
     
     # Get all results best-first
     best_first_results <- task$get_results(best_first=TRUE)

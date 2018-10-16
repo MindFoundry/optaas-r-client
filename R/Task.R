@@ -18,7 +18,8 @@
 #' # Or if you prefer to do things manually:
 #' task$generate_configuration()  # Generate a configuration
 #' task$record_result(configuration, score)  # Record your score and return a new configuration
-#' task$get_best_result()  # Return the result with the best score
+#' task$get_best_result()  # Return the result with the best score (for single-objective tasks)
+#' task$get_pareto_set()  # Return the set of Pareto front results (for multi-objective tasks)
 #'
 #' # To use batching (i.e. parallel score evaluation):
 #' configurations <- task$generate_configurations(number_of_workers)
@@ -43,6 +44,7 @@ Task <- R6::R6Class(
             private$self_url <- json$'_links'$self$href
             private$configurations_url <- json$'_links'$configurations$href
             private$results_url <- json$'_links'$results$href
+            private$pareto_url <- json$'_links'$pareto$href
         },
         run = function(scoring_function, number_of_iterations) {
             configuration <- self$generate_configuration()
@@ -56,6 +58,8 @@ Task <- R6::R6Class(
             
             if (is.null(self$json$objectives)) {
                 self$get_best_result()
+            } else {
+                self$get_pareto_set()
             }
         },
         generate_configuration = function() {
@@ -90,6 +94,10 @@ Task <- R6::R6Class(
         get_best_result = function() {
             self$get_results(best_first=TRUE, limit=1)[[1]]
         },
+        get_pareto_set = function() {
+            response <- private$session$get(private$pareto_url)
+            response$results
+        },
         delete = function() {
             private$session$delete(private$self_url)
         }
@@ -98,7 +106,8 @@ Task <- R6::R6Class(
         session = NULL,
         self_url = NULL,
         configurations_url = NULL,
-        results_url = NULL
+        results_url = NULL,
+        pareto_url = NULL
     )
 )
 

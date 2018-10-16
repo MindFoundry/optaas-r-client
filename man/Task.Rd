@@ -25,7 +25,8 @@ best_result <- task$run(scoring_function, n)
 # Or if you prefer to do things manually:
 task$generate_configuration()  # Generate a configuration
 task$record_result(configuration, score)  # Record your score and return a new configuration
-task$get_best_result()  # Return the result with the best score
+task$get_best_result()  # Return the result with the best score (for single-objective tasks)
+task$get_pareto_set()  # Return the set of Pareto front results (for multi-objective tasks)
 
 # To use batching (i.e. parallel score evaluation):
 configurations <- task$generate_configurations(number_of_workers)
