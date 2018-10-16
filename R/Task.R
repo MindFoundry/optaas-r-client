@@ -30,6 +30,8 @@
 #' # Other functions:
 #' task$get_results()  # Get all recorded results
 #' task$get_surrogate_predictions()  # Get predicted scores for specific configurations
+#' task$complete()  # Complete the task (no more configurations or results can be added)
+#' task$resume()  # Resume a completed task
 #' task$delete()  # Delete the task
 #' }
 
@@ -43,6 +45,8 @@ Task <- R6::R6Class(
             self$id <- json$id
             private$session <- session
             private$self_url <- json$'_links'$self$href
+            private$complete_url <- json$'_links'$complete$href
+            private$resume_url <- json$'_links'$resume$href
             private$configurations_url <- json$'_links'$configurations$href
             private$results_url <- json$'_links'$results$href
             private$pareto_url <- json$'_links'$pareto$href
@@ -106,6 +110,12 @@ Task <- R6::R6Class(
             response <- private$session$post(private$predictions_url, body)
             response$predictions
         },
+        complete = function() {
+            private$session$put(private$complete_url)
+        },
+        resume = function() {
+            private$session$put(private$resume_url)
+        },
         delete = function() {
             private$session$delete(private$self_url)
         }
@@ -113,6 +123,8 @@ Task <- R6::R6Class(
     private = list(
         session = NULL,
         self_url = NULL,
+        complete_url = NULL,
+        resume_url = NULL,
         configurations_url = NULL,
         results_url = NULL,
         pareto_url = NULL,
