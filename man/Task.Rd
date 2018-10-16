@@ -23,15 +23,16 @@ task$json  # The full JSON representation of the Task in OPTaaS
 best_result <- task$run(scoring_function, n)
 
 # Or if you prefer to do things manually:
-task$generate_configuration()  # Generate a configuration
-task$record_result(configuration, score)  # Record your score and return a new configuration
-task$get_best_result()  # Return the result with the best score (for single-objective tasks)
-task$get_pareto_set()  # Return the set of Pareto front results (for multi-objective tasks)
+configuration <- task$generate_configuration()
+result <- Result$new(configuration=configuration, score=score, ...)
+next_configuration <- task$record_result(result)
+
+task$get_best_result()  # Result with the best score (for single-objective tasks)
+task$get_pareto_set()  # Set of Pareto front results (for multi-objective tasks)
 
 # To use batching (i.e. parallel score evaluation):
 configurations <- task$generate_configurations(number_of_workers)
 results <- your_parallel_scoring_function(configurations)
-# NB results needs to be a list of (configuration$id, score) lists
 next_configurations <- task$record_results(results)
 
 # Other functions:

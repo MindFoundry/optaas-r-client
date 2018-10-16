@@ -16,15 +16,16 @@
 #' best_result <- task$run(scoring_function, n)
 #' 
 #' # Or if you prefer to do things manually:
-#' task$generate_configuration()  # Generate a configuration
-#' task$record_result(configuration, score)  # Record your score and return a new configuration
-#' task$get_best_result()  # Return the result with the best score (for single-objective tasks)
-#' task$get_pareto_set()  # Return the set of Pareto front results (for multi-objective tasks)
+#' configuration <- task$generate_configuration()
+#' result <- Result$new(configuration=configuration, score=score, ...)
+#' next_configuration <- task$record_result(result)
+#' 
+#' task$get_best_result()  # Result with the best score (for single-objective tasks)
+#' task$get_pareto_set()  # Set of Pareto front results (for multi-objective tasks)
 #'
 #' # To use batching (i.e. parallel score evaluation):
 #' configurations <- task$generate_configurations(number_of_workers)
 #' results <- your_parallel_scoring_function(configurations)
-#' # NB results needs to be a list of (configuration$id, score) lists
 #' next_configurations <- task$record_results(results)
 #'
 #' # Other functions:
@@ -59,7 +60,8 @@ Task <- R6::R6Class(
                 score <- do.call(scoring_function, configuration$values)
                 print(paste("Iteration:", i, " ", "Score:", to_string(score)))
                 flush.console()
-                configuration <- self$record_result(configuration, score)
+                result <- Result$new(configuration=configuration, score=score)
+                configuration <- self$record_result(result)
             }
             
             if (is.null(self$json$objectives)) {
@@ -72,9 +74,9 @@ Task <- R6::R6Class(
             response <- private$session$post(private$configurations_url, NULL)
             response$configurations[[1]]
         },
-        record_result = function(configuration, score) {
-            result_url <- configuration$'_links'$results$href
-            result_body <- list(score=score)
+        record_result = function(result) {
+            result_url <- result$configuration$'_links'$results$href
+            result_body <- result$to_json_without_configuration()
             response <- private$session$post(result_url, result_body)
             response$nextConfiguration
         },
@@ -83,7 +85,8 @@ Task <- R6::R6Class(
             response$configurations
         },
         record_results = function(results) {
-            response <- private$session$post(private$results_url, body=list(results=results))
+            result_jsons <- lapply(results, function(result) { result$to_json() })
+            response <- private$session$post(private$results_url, body=list(results=result_jsons))
             response$nextConfigurations
         },
         get_results = function(best_first = FALSE, limit = NULL) {

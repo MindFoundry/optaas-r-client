@@ -19,7 +19,8 @@ test_that("Can run task with batching", {
         x <- configuration$values[["x"]]
         y <- configuration$values[["y"]]
         score <- (x * y) - (x / y)
-        list(configuration=configuration$id, score=score)
+        variance <- abs(score / 100)
+        Result$new(configuration=configuration, score=score, variance=variance)
     }
     
     spin_off_workers_and_get_results <- function(configurations) {
