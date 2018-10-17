@@ -49,3 +49,8 @@ test_that("Can run a multi-objective task", {
         expect_equal(expected_score, result$score, tolerance=0.01)
     }
 })
+
+
+test_that("Can run a multi-objective task with thresholds", {
+    # TODO
+})

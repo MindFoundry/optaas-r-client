@@ -18,9 +18,11 @@ task$json  # The full JSON representation of the Task in OPTaaS
 
 # To run your task:
 # First define a scoring function whose arguments are identical to your parameter names.
-# The function should return a score value. 
+# The function should return a score value 
 # Then to run the task for n iterations and store the best result:
 best_result <- task$run(scoring_function, n)
+# Or to run for at most n iterations, but stop when the score is X or better:
+best_result <- task$run(scoring_function, n, X)
 
 # Or if you prefer to do things manually:
 configuration <- task$generate_configuration()
@@ -36,7 +38,7 @@ results <- your_parallel_scoring_function(configurations)
 next_configurations <- task$record_results(results)
 
 # Other functions:
-task$add_user_defined_configuration()  # Warm-start the optimization by recording results you've already calculated
+task$add_user_defined_configuration()  # Warm-start the optimization with pre-calculated results
 task$get_results()  # Get all recorded results
 task$get_surrogate_predictions()  # Get predicted scores for specific configurations
 task$complete()  # Complete the task (no more configurations or results can be added)

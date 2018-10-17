@@ -11,9 +11,11 @@
 #' 
 #' # To run your task:
 #' # First define a scoring function whose arguments are identical to your parameter names.
-#' # The function should return a score value. 
+#' # The function should return a score value 
 #' # Then to run the task for n iterations and store the best result:
 #' best_result <- task$run(scoring_function, n)
+#' # Or to run for at most n iterations, but stop when the score is X or better:
+#' best_result <- task$run(scoring_function, n, X)
 #' 
 #' # Or if you prefer to do things manually:
 #' configuration <- task$generate_configuration()
@@ -29,7 +31,7 @@
 #' next_configurations <- task$record_results(results)
 #'
 #' # Other functions:
-#' task$add_user_defined_configuration()  # Warm-start the optimization by recording results you've already calculated
+#' task$add_user_defined_configuration()  # Warm-start the optimization with pre-calculated results
 #' task$get_results()  # Get all recorded results
 #' task$get_surrogate_predictions()  # Get predicted scores for specific configurations
 #' task$complete()  # Complete the task (no more configurations or results can be added)
@@ -54,16 +56,49 @@ Task <- R6::R6Class(
             private$pareto_url <- json$'_links'$pareto$href
             private$predictions_url <- json$'_links'$predictions$href
         },
-        run = function(scoring_function, number_of_iterations) {
+        run = function(scoring_function, number_of_iterations, score_threshold=NULL) {
+            print(paste("Running", self$json$title, "for", number_of_iterations, "iterations"))
+            
+            if (is.null(score_threshold)) {
+                if (is.null(self$json$objectives)) {
+                    if (self$json$goal == "min") {
+                        score_threshold = self$json$minKnownScore
+                    } else {
+                        score_threshold = self$json$maxKnownScore
+                    }
+                }
+            }
+            
+            if (is.null(score_threshold)) {
+                reached_threshold = function(score) { FALSE }
+            } else {
+                print(paste("(or until score is", score_threshold, "or better)"))
+                if (self$json$goal == "min") {
+                    reached_threshold = function(score) { score <= score_threshold }
+                } else {
+                    reached_threshold = function(score) { score >= score_threshold }
+                }
+            }
+            flush.console()
+            
             configuration <- self$generate_configuration()
             
             for (i in 1:number_of_iterations) {
                 score <- do.call(scoring_function, configuration$values)
                 print(paste("Iteration:", i, " ", "Score:", to_string(score)))
                 flush.console()
+                
                 result <- Result$new(configuration=configuration, score=score)
                 configuration <- self$record_result(result)
+                
+                if (reached_threshold(score)) {
+                    break
+                }
             }
+            
+            self$complete()
+            print('Task Completed')
+            flush.console()
             
             if (is.null(self$json$objectives)) {
                 self$get_best_result()
