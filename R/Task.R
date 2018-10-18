@@ -58,27 +58,8 @@ Task <- R6::R6Class(
         },
         run = function(scoring_function, number_of_iterations, score_threshold=NULL) {
             print(paste("Running", self$json$title, "for", number_of_iterations, "iterations"))
-            
-            if (is.null(score_threshold)) {
-                if (is.null(self$json$objectives)) {
-                    if (self$json$goal == "min") {
-                        score_threshold = self$json$minKnownScore
-                    } else {
-                        score_threshold = self$json$maxKnownScore
-                    }
-                }
-            }
-            
-            if (is.null(score_threshold)) {
-                reached_threshold = function(score) { FALSE }
-            } else {
-                print(paste("(or until score is", score_threshold, "or better)"))
-                if (self$json$goal == "min") {
-                    reached_threshold = function(score) { score <= score_threshold }
-                } else {
-                    reached_threshold = function(score) { score >= score_threshold }
-                }
-            }
+
+            reached_threshold <- private$make_reached_threshold_function(score_threshold)
             flush.console()
             
             configuration <- self$generate_configuration()
@@ -187,15 +168,90 @@ Task <- R6::R6Class(
         configurations_url = NULL,
         results_url = NULL,
         pareto_url = NULL,
-        predictions_url = NULL
+        predictions_url = NULL,
+        make_reached_threshold_function = function(score_threshold=NULL) {
+            if (is.null(self$json$objectives)) {
+                if (is.null(score_threshold)) {
+                    if (self$json$goal == "min") {
+                        score_threshold = self$json$minKnownScore
+                    } else {
+                        score_threshold = self$json$maxKnownScore
+                    }
+                }
+            } else {
+                if (is.null(score_threshold)) {
+                    score_threshold <- list()
+                }
+                
+                for (objective in self$json$objectives) {
+                    if (is.null(score_threshold[[objective$id]])) {
+                        if (objective$goal == "min") {
+                            best_known_score <- objective$minKnownScore
+                        } else {
+                            best_known_score <- objective$maxKnownScore
+                        }
+                        if (!is.null(best_known_score)) {
+                            score_threshold[[objective$id]] <- best_known_score
+                        }
+                    }
+                }
+                
+                if (length(score_threshold) == 0) {
+                    score_threshold <- NULL
+                }
+            }
+            
+            if (is.null(score_threshold)) {
+                function(score) { FALSE }
+            } else {
+                print(paste("(or until score is", to_string(score_threshold), "or better)"))
+                
+                if (is.null(self$json$objectives)) {
+                    if (self$json$goal == "min") {
+                        function(score) { score <= score_threshold }
+                    } else {
+                        function(score) { score >= score_threshold }
+                    }
+                } else {
+                    function(scores) {
+                        all_thresholds_reached <- TRUE
+                        
+                        for (objective in self$json$objectives) {
+                            threshold <- score_threshold[[objective$id]]
+                            if (!is.null(threshold)) {
+                                score <- scores[[objective$id]]
+                                if (is.null(score)) {
+                                    all_thresholds_reached <- FALSE
+                                    break
+                                }
+                                
+                                if (objective$goal == "min") {
+                                    if (threshold < score) {
+                                        all_thresholds_reached <- FALSE
+                                        break
+                                    }
+                                } else {
+                                    if (threshold > score) {
+                                        all_thresholds_reached <- FALSE
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                        
+                        all_thresholds_reached
+                    }
+                }   
+            }
+        }
     )
 )
 
 
-to_string <- function(score) {
-    if (class(score) == "list") {
-        paste(names(score), score, sep = "=", collapse = ", ")
+to_string <- function(number_or_list) {
+    if (class(number_or_list) == "list") {
+        paste(names(number_or_list), number_or_list, sep = "=", collapse = ", ")
     } else {
-        score
+        number_or_list
     }
 }
