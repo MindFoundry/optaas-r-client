@@ -14,9 +14,13 @@ An API Key that can be used to interact with OPTaaS.
 \section{Fields}{
 
 \describe{
-\item{\code{id}}{The actual API Key}
+\item{\code{id}}{The actual API Key.}
 
-\item{\code{json}}{The full JSON representation of the API Key in OPTaaS}
+\item{\code{role}}{The role assigned to this key.}
+
+\item{\code{expired}}{Whether this key has expired, i.e. can no longer be used.}
+
+\item{\code{json}}{The full JSON representation of this key in OPTaaS.}
 }}
 
 \keyword{datasets}
