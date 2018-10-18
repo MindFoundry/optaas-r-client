@@ -61,12 +61,9 @@ OPTaaSClient <- R6::R6Class(
     public = list(
         initialize = function(server_url, api_key, disable_version_check=FALSE) {
             private$session <- OPTaaSSession$new(server_url, api_key, disable_version_check)
-            private$tasks_endpoint <- tryCatch({
-                private$session$get(API_ROOT)$'_links'$tasks$href
-            },
-            error = function(cond) {
-                paste(API_ROOT, 'tasks', sep = '/')
-            })
+            endpoints <- private$session$get(API_ROOT)$'_links'
+            private$tasks_endpoint <- endpoints$tasks$href
+            private$api_keys_endpoint <- endpoints$apiKeys$href
         },
         create_task = function(title,
                                parameters,
@@ -96,8 +93,10 @@ OPTaaSClient <- R6::R6Class(
         get_all_tasks = function() {
             tasks <- list()
             tasks_json <- private$session$get(private$tasks_endpoint)$tasks
-            for (i in 1:length(tasks_json)) {
-                tasks[[i]] <- Task$new(tasks_json[[i]], private$session)
+            if (length(tasks_json) > 0) {
+                for (i in 1:length(tasks_json)) {
+                    tasks[[i]] <- Task$new(tasks_json[[i]], private$session)
+                }
             }
             tasks
         },
@@ -105,10 +104,25 @@ OPTaaSClient <- R6::R6Class(
             endpoint <- paste(private$tasks_endpoint, task_id, sep = '/')
             task_json <- private$session$get(endpoint)
             Task$new(task_json, private$session)
+        },
+        get_api_keys = function() {
+            api_keys <- list()
+            api_keys_json <- private$session$get(private$api_keys_endpoint)$apiKeys
+            if (length(api_keys_json) > 0) {
+                for (i in 1:length(api_keys_json)) {
+                    api_keys[[i]] <- ApiKey$new(api_keys_json[[i]], private$session)
+                }
+            }
+            api_keys
+        },
+        generate_api_key = function(role="standard") {
+            api_key_json <- private$session$post(private$api_keys_endpoint, list(role=role))
+            ApiKey$new(api_key_json, private$session)
         }
     ),
     private = list(
         session = NULL,
-        tasks_endpoint = NULL
+        tasks_endpoint = NULL,
+        api_keys_endpoint = NULL
     )
 )

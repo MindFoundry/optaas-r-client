@@ -20,8 +20,8 @@ OPTaaSSession <- R6::R6Class(
         get = function(endpoint, query = NULL) {
             private$get_response(GET, endpoint, query=query)
         },
-        put = function(endpoint) {
-            private$get_response(PUT, endpoint)
+        put = function(endpoint, body=NULL) {
+            private$get_response(PUT, endpoint, body)
         },
         delete = function(endpoint) {
             private$get_response(DELETE, endpoint)
