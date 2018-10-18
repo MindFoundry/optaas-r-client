@@ -6,6 +6,9 @@ expect_key_is_present = function(all_keys, id, role, expired=FALSE) {
     found_key <- FALSE
     for (key in all_keys) {
         if (key$id == id) {
+            expect_equal(key$role, role)
+            expect_equal(key$expired, expired)
+            expect_equal(key$json$id, id)
             expect_equal(key$json$role, role)
             expect_equal(key$json$expired, expired)
             found_key <- TRUE
@@ -21,7 +24,10 @@ test_that("Can get API keys", {
 })
 
 verify_key = function(api_key, role) {
+    expect_equal(api_key$role, role)
     expect_equal(api_key$json$role, role)
+    
+    expect_equal(api_key$expired, FALSE)
     expect_equal(api_key$json$expired, FALSE)
     
     all_keys <- client$get_api_keys()
