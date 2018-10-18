@@ -1,5 +1,6 @@
 # Mind Foundry OPTaaS R Client
 
+![GitHub Release](https://img.shields.io/github/release/mindfoundry/optaas-r-client.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![tutorials-binder](https://img.shields.io/badge/tutorials-binder-ff69b4.svg)](https://tutorial.optaas.mindfoundry.ai)
 
