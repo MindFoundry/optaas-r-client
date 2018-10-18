@@ -5,7 +5,6 @@ USER_AGENT = paste("RClient", packageVersion("optaas.client"), sep="/")
 #' Makes requests to OPTaaS and returns responses.
 #'
 #' @import httr
-#' @import utils
 
 OPTaaSSession <- R6::R6Class(
     'OPTaaSSession',
@@ -61,10 +60,9 @@ check_version = function(server_version, client_version) {
         server_version <- strsplit(server_version, ".post")[[1]][1]
         if (server_version != client_version) {
             tryCatch({
-                comparison <- compareVersion(server_version, client_version)
-                if (comparison > 0) {
+                if (client_version < server_version) {
                     warning(gsub("SERVER_VERSION", server_version, NEWER_VERSION_MESSAGE))
-                } else if (comparison < 0) {
+                } else {
                     warning(gsub("SERVER_VERSION", server_version, OLDER_VERSION_MESSAGE))
                 }
             }, error=function(cond) {})
