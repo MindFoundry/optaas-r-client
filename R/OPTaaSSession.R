@@ -5,6 +5,7 @@ USER_AGENT = paste("RClient", packageVersion("optaas.client"), sep="/")
 #' Makes requests to OPTaaS and returns responses.
 #'
 #' @import httr
+#' @import utils
 
 OPTaaSSession <- R6::R6Class(
     'OPTaaSSession',
@@ -40,7 +41,7 @@ OPTaaSSession <- R6::R6Class(
                 private$headers
             )
             
-            if (isFALSE(private$disable_version_check)) {
+            if (!isTRUE(private$disable_version_check)) {
                 check_version(httr::headers(response)$`X-ApiVersion`, packageVersion('optaas.client'))
             }
             
