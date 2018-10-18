@@ -59,9 +59,8 @@ API_ROOT = '/api/v1'
 OPTaaSClient <- R6::R6Class(
     'OPTaaSClient',
     public = list(
-        initialize = function(server_url, api_key) {
-            private$session <- OPTaaSSession$new(server_url, api_key)
-            private$session <- OPTaaSSession$new(server_url, api_key)
+        initialize = function(server_url, api_key, disable_version_check=FALSE) {
+            private$session <- OPTaaSSession$new(server_url, api_key, disable_version_check)
             private$tasks_endpoint <- tryCatch({
                 private$session$get(API_ROOT)$'_links'$tasks$href
             },
