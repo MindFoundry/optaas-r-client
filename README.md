@@ -86,4 +86,4 @@ To run all checks (including tests): `Ctrl+Shift+E`.
 
 ## Deployment
 
-For each production release, set the version in the `DESCRIPTION` file to match the version of the OPTaaS server and Python client. Then create a git tag in github with the same version.
+For each production release, set the version in the `DESCRIPTION` file to match the version of the OPTaaS server and Python client. Then [create a new GitHub Release](https://github.com/MindFoundry/optaas-r-client/releases/new) with the same version.
