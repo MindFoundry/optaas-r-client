@@ -1,7 +1,8 @@
 context("Version Check")
 
-mock_client_version <- '3.1.5'
+mock_client_version <- package_version('3.1.5')
 
+equal_server_version <- '3.1.5'
 equal_server_version_with_post <- '3.1.5.postX'
 
 newer_server_versions <- c('3.1.6', '3.2.0', '3.10.0', '4.0.0')
@@ -24,8 +25,8 @@ test_that("No message if server version is missing", {
 })
 
 test_that("No message if server version has same prefix", {
+    expect_silent(check_version(equal_server_version, mock_client_version))
     expect_silent(check_version(equal_server_version_with_post, mock_client_version))
-    expect_silent(check_version(mock_client_version, mock_client_version))
 })
 
 test_that("Warning appears if new version is available ", {
