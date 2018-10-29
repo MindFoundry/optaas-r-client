@@ -74,12 +74,16 @@ IntParameter <- function(name, minimum, maximum, distribution="Uniform", id=NULL
 #' @param default (optional) Initial value for parameter (must be within the allowed range). If not defined, it will be the midpoint of the range.
 #' @param optional (optional) Whether the parameter can be omitted in a Configuration
 #' @param include_in_default (optional) Whether an optional parameter will be included in the default Configuration
+#' @param cyclical (optional) If TRUE, OPTaaS will select values from a period defined by the minimum and maximum. Values near the minimum and maximum will be considered to be close, as if they were on a circle.
 #'
+#' Note: if cyclical is true, distribution will be ignored.
+#' 
 #' @export
 
-FloatParameter <- function(name, minimum, maximum, distribution="Uniform", id=NULL, default=NULL, optional=FALSE, include_in_default=TRUE) {
+FloatParameter <- function(name, minimum, maximum, distribution="Uniform", id=NULL, default=NULL, 
+                           optional=FALSE, include_in_default=TRUE, cyclical=FALSE) {
     make_parameter_json("number", name, id, default, optional, include_in_default, 
-                        minimum=minimum, maximum=maximum, distribution=distribution)
+                        minimum=minimum, maximum=maximum, distribution=distribution, cyclical=cyclical)
 }
 
 
