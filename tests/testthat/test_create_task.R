@@ -21,7 +21,6 @@ parameters <- list(
     GroupParameter("empty group", items=list()),
     FloatParameter('float1', minimum=0, maximum=1, default=0.2),
     FloatParameter('float2', minimum=0.5, maximum=4.5, distribution="LogUniform"),
-    FloatParameter('cyclical', minimum=-1.1, maximum=2.2, cyclical=TRUE),
     SubsetParameter('subset with default', values=list("b", 3, TRUE, 1.2), default=list(TRUE, "b")),
     SubsetParameter('subset without default', values=list(FALSE, -2.3)),
     ConstantParameter('constant', value=123.456)
@@ -88,4 +87,15 @@ test_that("Optional arguments can be set", {
     expect_equal(5, task$json$initialConfigurations)
     expect_equal(123, task$json$randomSeed)
     expect_equal(list(any = 1, data = 2), task$json$userDefined)
+})
+
+test_that("Cyclical parameters are supported", {
+    cyclical <- FloatParameter('cyclical', minimum=-1.1, maximum=2.2, cyclical=TRUE)
+
+    task <- client$create_task(
+        title = title,
+        parameters <- list(cyclical)
+    )
+    
+    expect_equal(list(cyclical), task$json$parameters)
 })

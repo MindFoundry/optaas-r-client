@@ -25,9 +25,9 @@ FloatParameter(name, minimum, maximum, distribution = "Uniform",
 
 \item{include_in_default}{(optional) Whether an optional parameter will be included in the default Configuration}
 
-\item{cyclical}{(optional) If TRUE, OPTaaS will select values from a period defined by the minimum and maximum. Values near the minimum and maximum will be considered to be close, as if they were on a circle.
+\item{cyclical}{(optional) If TRUE, OPTaaS will select values from a period starting at the `minimum` (inclusive) and ending at the `maximum` (exclusive). Values near the minimum and maximum will be considered to be close, as if they were on a circle.
 
-Note: if cyclical is true, distribution will be ignored.}
+Note: if `cyclical` is TRUE, `distribution` will be ignored. Also, if any of your parameters are cyclical, all your parameters must be Floats, Constants or Groups (other types are not currently supported), and none of them can be `optional`.}
 }
 \description{
 A parameter which can be assigned float values within a specified range (inclusive).
