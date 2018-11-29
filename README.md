@@ -72,7 +72,7 @@ Run your task:
 best_result <- task$run(scoring_function=scoring_function, number_of_iterations=20)
 ```
 
-See also [our tutorial notebooks](https://tutorial.optaas.mindfoundry.ai).
+See also [our tutorial notebooks](https://mybinder.org/v2/gh/MindFoundry/optaas-tutorials/1.3.5?filepath=notebooks).
 
 ## Development
 
